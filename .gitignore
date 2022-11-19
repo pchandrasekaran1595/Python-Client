@@ -1,0 +1,11 @@
+venv
+__pycache__
+*.jpg
+*.jpeg
+*.png
+*.tiff
+*.bmp
+*.mp4
+*.avi
+!Test_1.jpg
+!Test_2.jpg

@@ -1,0 +1,4 @@
+pillow>=9.2.0
+requests>=2.26.0
+matplotlib==3.4.3
+opencv-python==4.6.0.66
