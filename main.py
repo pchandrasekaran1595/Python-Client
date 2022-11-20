@@ -81,7 +81,6 @@ def draw_detections(image: np.ndarray, face_detections: tuple, eye_detections: t
                 cv2.rectangle(img=image[y1:y1+h1, x1:x1+w1], pt1=(x2, y2), pt2=(x2+w2, y2+h2), color=(255, 0, 0), thickness=2)
             cv2.rectangle(img=image, pt1=(x1, y1), pt2=(x1+w1, y1+h1), color=(0, 255, 0), thickness=2)
 
-
 # ---------------------------------------------------------------------------------------------------------------------- #
 
 def test_depth_api():
@@ -159,8 +158,6 @@ def test_depth_api():
 # ---------------------------------------------------------------------------------------------------------------------- #
 
 def test_cv_api():
-
-    pass 
 
     args_1: str = "--mode"
     args_2: str = "--base-url"
@@ -279,7 +276,7 @@ def test_haar_api():
     if args_4 in sys.argv: filename: str = sys.argv[sys.argv.index(args_4) + 1]
 
     assert mode == "image" or mode == "realtime", "Invalid Mode"
-    assert model == "face" or model == "eye", "Imvalid Model Type"
+    assert model == "face" or model == "eye", "Invalid Model Type"
 
     if mode == "image":
         assert filename in os.listdir(INPUT_PATH), "File not Found"
@@ -351,54 +348,74 @@ def test_haar_api():
 
 def test_yolo_api():
 
-    pass # Must Fix
+    args_1: str = "--mode"
+    args_2: str = "--base-url"
+    args_3: str = "--model-type"
+    args_4: str = "--filename"
+    args_5: str = "--version"
+    
+    mode: str = "image"
+    base_url: str = "http://192.168.10.3:5050"
+    model_type: str = "tiny"
+    filename: str = "Test_1.jpg"
+    version: int = 6
 
-    # image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Test_1.jpg"))
-    # version: int = 3
-    # model_type = "small"
+    if args_1 in sys.argv: mode: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_2) + 1]
+    if args_3 in sys.argv: model_type: str = sys.argv[sys.argv.index(args_3) + 1]
+    if args_4 in sys.argv: filename: str = sys.argv[sys.argv.index(args_4) + 1]
+    if args_5 in sys.argv: version: int = int(sys.argv[sys.argv.index(args_5) + 1])
 
-    # payload = {
-    #     "imageData" : encode_image_to_base64(image=image)
-    # }
+    assert mode == "image" or mode == "realtime", "Invalid Mode"
+    assert model_type == "small" or model_type == "tiny" or model_type == "nano", "Invalid Model Type"
 
-    # response = requests.request(method="POST", url=f"http://127.0.0.1:6600/infer/v{version}/{model_type}", json=payload)
-    # if response.status_code == 200:
-    #     if response.json()["statusCode"] == 200:
-    #         # print(response.json()["label"])
-    #         # print(response.json()["score"])
-    #         # print(response.json()["box"])
-    #         cv2.rectangle(image, (response.json()["box"][0], response.json()["box"][1]), (response.json()["box"][2], response.json()["box"][3]), (0, 255, 0), 2)
-    #         show_image(image=image, title=f"{response.json()['label']} : {response.json()['score']}")
-    #     else:
-    #         print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
-    # else:
-    #     print(f"Error {response.status_code} : {response.reason}")
-
-    # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
-    # cap.set(cv2.CAP_PROP_FPS, 30)
-
-    # while True:
-    #     ret, frame = cap.read()
-    #     if not ret: break
-    #     frameData = encode_image_to_base64(image=frame)
-    #     payload = {
-    #         "imageData" : frameData
-    #     }       
-
-    #     response = requests.request(method="POST", url="http://127.0.0.1:6600/infer/v6/nano", json=payload)
-    #     if response.status_code == 200:
-    #         if response.json()["statusCode"] == 200:
-    #             cv2.rectangle(frame, (response.json()["box"][0], response.json()["box"][1]), (response.json()["box"][2], response.json()["box"][3]), (0, 255, 0), 2)
-    #             cv2.putText(frame, response.json()["label"], (response.json()["box"][0]-10, response.json()["box"][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    if mode == "image":
         
-    #     cv2.imshow("Feed", frame)
-    #     if cv2.waitKey(1) & 0xFF == ord("q"): 
-    #         break
-        
-    # cap.release()
-    # cv2.destroyAllWindows()
+        assert filename in os.listdir(INPUT_PATH), "File not Found"
+
+        image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
+        payload = {
+            "imageData" : encode_image_to_base64(image=image)
+        }
+
+        response = requests.request(method="POST", url=f"{base_url}/infer/v{version}/{model_type}", json=payload)
+        if response.status_code == 200 and response.json()["statusCode"] == 200:
+            cv2.rectangle(image, (response.json()["box"][0], response.json()["box"][1]), (response.json()["box"][2], response.json()["box"][3]), (0, 255, 0), 2)
+            show_image(image=image, title=f"{response.json()['label'].title()} : {response.json()['score']}")
+        else:
+            print(f"Error {response.status_code} : {response.reason}")
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+
+    else:
+        if platform.system() == "Windows":
+            cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        else:
+            cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
+        cap.set(cv2.CAP_PROP_FPS, 30)
+
+        while True:
+            ret, frame = cap.read()
+            if not ret: break
+            frameData = encode_image_to_base64(image=frame)
+            payload = {
+                "imageData" : frameData
+            }       
+
+            response = requests.request(method="POST", url=f"{base_url}/infer/v{version}/{model_type}", json=payload)
+            if response.status_code == 200 and response.json()["statusCode"] == 200:
+                cv2.rectangle(frame, (response.json()["box"][0], response.json()["box"][1]), (response.json()["box"][2], response.json()["box"][3]), (0, 255, 0), 2)
+                cv2.putText(frame, response.json()["label"].title(), (response.json()["box"][0]-10, response.json()["box"][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            else:
+                cv2.putText(frame, "ERROR", (25, 75), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                
+            cv2.imshow("Feed", frame)
+            if cv2.waitKey(1) & 0xFF == ord("q"): 
+                break
+            
+        cap.release()
+        cv2.destroyAllWindows()
 
 # ---------------------------------------------------------------------------------------------------------------------- #
 
@@ -640,7 +657,7 @@ def test_aic_api():
 
 
 def main():
-    test_cv_api()
+    test_yolo_api()
 
 
 if __name__ == '__main__':
