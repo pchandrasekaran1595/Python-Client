@@ -419,45 +419,26 @@ def test_yolo_api():
 
 # ---------------------------------------------------------------------------------------------------------------------- #
 
-def test_wic_api():
-
-    args_1: str = "--base-url"
-    args_2: str = "--filename"
-    
-    base_url: str = "http://localhost:3034"
-    filename: str = "Test_1.jpg"
-
-    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
-    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
-
-    assert filename in os.listdir(INPUT_PATH), "File not Found"
-
-    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
-
-    payload = {
-        "imageData" : encode_image_to_base64(image=image)
-    }
-
-    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
-    if response.status_code == 200:
-        if response.json()["statusCode"] == 200:
-           print(response.json()["label"])
-        else:
-            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
-    else:
-        print(f"Error {response.status_code} : {response.reason}")
-
-# ---------------------------------------------------------------------------------------------------------------------- #
-
 def test_facial_recognition_api():
 
-    pass # Must Fix
+    args_1: str = "--mode"
+    args_2: str = "--base-url"
+    args_3: str = "--filename"
+
+    mode: str = "image"
+    base_url: str = "http://localhost:3032"
+    filename: str = "Test_1.jpg"
+
+    if args_1 in sys.argv: mode: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_2) + 1]
+    if args_3 in sys.argv: filename: str = sys.argv[sys.argv.index(args_3) + 1]
+
+    assert mode == "image" or mode == "realtime", "Invalid Mode"
      
     # image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, ".jpg"))
     # image_2: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, ".jpg"))
     # # image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Face_3.jpg"))[:, ::-1, :] # Horizontal Flip
-
-
+    
     # payload = {
     #     "imageData_1" : encode_image_to_base64(image=image_1),
     #     "imageData_2" : encode_image_to_base64(image=image_2)
@@ -530,36 +511,6 @@ def test_fsalary_converter_api():
 
 # ---------------------------------------------------------------------------------------------------------------------- #
 
-def test_fdi_api():
-
-    args_1: str = "--base-url"
-    args_2: str = "--filename"
-    
-    base_url: str = "http://localhost:3032"
-    filename: str = "Test_1.jpg"
-
-    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
-    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
-
-    assert filename in os.listdir(INPUT_PATH), "File not Found"
-
-    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
-
-    payload = {
-        "imageData" : encode_image_to_base64(image=image)
-    }
-
-    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
-    if response.status_code == 200:
-        if response.json()["statusCode"] == 200:
-           print(response.json()["label"])
-        else:
-            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
-    else:
-        print(f"Error {response.status_code} : {response.reason}")
-
-# ---------------------------------------------------------------------------------------------------------------------- #
-
 def test_bg_remove_api():
 
     args_1: str = "--mode"
@@ -625,8 +576,98 @@ def test_bg_remove_api():
         else:
             print(f"Error {response.status_code} : {response.reason}")
 
-# ---------------------------------------------------------------------------------------------------------------------- #   
+# ---------------------------------------------------------------------------------------------------------------------- #
+
+def test_fdis_api():
+
+    args_1: str = "--base-url"
+    args_2: str = "--filename"
     
+    base_url: str = "http://localhost:3032"
+    filename: str = "Test_1.jpg"
+
+    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
+
+    assert filename in os.listdir(INPUT_PATH), "File not Found"
+
+    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
+
+    payload = {
+        "imageData" : encode_image_to_base64(image=image)
+    }
+
+    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
+    if response.status_code == 200:
+        if response.json()["statusCode"] == 200:
+           print(response.json()["label"])
+        else:
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+    else:
+        print(f"Error {response.status_code} : {response.reason}")
+
+# ---------------------------------------------------------------------------------------------------------------------- #   
+
+def test_wic_api():
+
+    args_1: str = "--base-url"
+    args_2: str = "--filename"
+    
+    base_url: str = "http://localhost:3034"
+    filename: str = "Test_1.jpg"
+
+    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
+
+    assert filename in os.listdir(INPUT_PATH), "File not Found"
+
+    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
+
+    payload = {
+        "imageData" : encode_image_to_base64(image=image)
+    }
+
+    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
+    if response.status_code == 200:
+        if response.json()["statusCode"] == 200:
+           print(response.json()["label"])
+        else:
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+    else:
+        print(f"Error {response.status_code} : {response.reason}")
+
+# ---------------------------------------------------------------------------------------------------------------------- #   
+
+def test_ffc_api():
+
+    args_1: str = "--base-url"
+    args_2: str = "--filename"
+    
+    base_url: str = "http://192.168.10.3:3036"
+    filename: str = "Test_1.jpg"
+
+    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
+
+    assert filename in os.listdir(INPUT_PATH), "File not Found"
+
+    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
+
+    payload = {
+        "imageData" : encode_image_to_base64(image=image)
+    }
+
+    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
+    if response.status_code == 200:
+        if response.json()["statusCode"] == 200:
+           print(response.json()["label"])
+        else:
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+    else:
+        print(f"Error {response.status_code} : {response.reason}")
+    
+# ---------------------------------------------------------------------------------------------------------------------- #   
+
 def test_aic_api():
 
     args_1: str = "--base-url"
@@ -655,10 +696,16 @@ def test_aic_api():
     else:
         print(f"Error {response.status_code} : {response.reason}")
 
+# ---------------------------------------------------------------------------------------------------------------------- #   
+
 
 def main():
-    test_yolo_api()
+    test_ffc_api()
 
+# ---------------------------------------------------------------------------------------------------------------------- #   
 
 if __name__ == '__main__':
     sys.exit(main() or 0)
+
+# ---------------------------------------------------------------------------------------------------------------------- #   
+
