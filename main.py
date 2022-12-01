@@ -423,35 +423,41 @@ def test_facial_recognition_api():
 
     args_1: str = "--mode"
     args_2: str = "--base-url"
-    args_3: str = "--filename"
+    args_3: str = "--f1"
+    args_4: str = "--f2"
 
     mode: str = "image"
     base_url: str = "http://localhost:3032"
-    filename: str = "Test_1.jpg"
+    filename_1: str = "Test_3.jpg"
+    filename_2: str = "Test_4.jpg"
 
     if args_1 in sys.argv: mode: str = sys.argv[sys.argv.index(args_1) + 1]
     if args_2 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_2) + 1]
-    if args_3 in sys.argv: filename: str = sys.argv[sys.argv.index(args_3) + 1]
+    if args_3 in sys.argv: filename_1: str = sys.argv[sys.argv.index(args_3) + 1]
+    if args_4 in sys.argv: filename_2: str = sys.argv[sys.argv.index(args_4) + 1]
 
     assert mode == "image" or mode == "realtime", "Invalid Mode"
      
-    # image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, ".jpg"))
-    # image_2: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, ".jpg"))
-    # # image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Face_3.jpg"))[:, ::-1, :] # Horizontal Flip
-    
-    # payload = {
-    #     "imageData_1" : encode_image_to_base64(image=image_1),
-    #     "imageData_2" : encode_image_to_base64(image=image_2)
-    # }
+    if mode == "image":
+        assert filename_1 in os.listdir(INPUT_PATH), "File 1 not Found"
+        assert filename_2 in os.listdir(INPUT_PATH), "File 2 not Found"
 
-    # response = requests.request(method="POST", url=f"http://127.0.0.1:50000/compare/", json=payload)
-    # if response.status_code == 200:
-    #     if response.json()["statusCode"] == 200:
-    #        print(f"Simialrity : {float(response.json()['cosine_similarity']):.2f}")
-    #     else:
-    #         print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
-    # else:
-    #     print(f"Error {response.status_code} : {response.reason}")
+        image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename_1))
+        image_2: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename_2))
+        # # image_1: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Face_3.jpg"))[:, ::-1, :] # Horizontal Flip
+        
+        payload = {
+            "imageData_1" : encode_image_to_base64(image=image_1),
+            "imageData_2" : encode_image_to_base64(image=image_2)
+        }
+
+        response = requests.request(method="POST", url=f"{base_url}/compare", json=payload)
+        if response.status_code == 200 and response.json()["statusCode"] == 200:
+            print(f"Simialrity : {float(response.json()['cosine_similarity']):.2f}")
+        else:
+            print(f"Error {response.status_code} : {response.reason}")
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+
     
     # imageData_1: str = encode_image_to_base64(image=image_1)
 
@@ -555,6 +561,64 @@ def test_bg_remove_api():
         image_2: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Test_2.jpg"))
 
 
+        payload = {
+            "imageData_1" : encode_image_to_base64(image=image),
+            "imageData_2" : encode_image_to_base64(image=image_2)
+        }
+
+        response = requests.request(method="POST", url=url, json=payload)
+        response = requests.request(method="POST", url=url, json=payload)
+
+
+        if response.status_code == 200:
+            show_images(
+                image_1=cv2.cvtColor(src=image, code=cv2.COLOR_BGR2RGB),
+                image_2=cv2.cvtColor(src=decode_image(response.json()["bgreplaceImageData"]), code=cv2.COLOR_BGR2RGB),
+                cmap_1="gnuplot2",
+                cmap_2="gnuplot2",
+                title_1="Original",
+                title_2="BG Replaced Image",
+            )
+        else:
+            print(f"Error {response.status_code} : {response.reason}")
+
+# ---------------------------------------------------------------------------------------------------------------------- #
+
+def test_bg_remove_api_render():
+
+    args_1: str = "--mode"
+    args_2: str = "--base-url"
+
+    mode: str = "remove"
+    base_url: str = "http://localhost:3030"
+
+    if args_1 in sys.argv: mode: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_2) + 1]
+        
+    url: str = base_url + f"/{mode}"
+    
+    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Test_1.jpg"))
+    payload = {
+        "imageData" : encode_image_to_base64(image=image)
+    }
+
+    if mode == "remove":
+        response = requests.request(method="POST", url=url, json=payload)
+        if response.status_code == 200:
+            show_images(
+                image_1=cv2.cvtColor(src=image, code=cv2.COLOR_BGR2RGB),
+                image_2=cv2.cvtColor(src=decode_image(response.json()["bglessImageData"]), code=cv2.COLOR_BGR2RGB),
+                cmap_1="gnuplot2",
+                cmap_2="gnuplot2",
+                title_1="Original",
+                title_2="BG Removed Image",
+            )
+        else:
+            print(f"Error {response.status_code} : {response.reason}")
+    
+
+    elif mode == "replace":
+        image_2: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, "Test_2.jpg"))
         payload = {
             "imageData_1" : encode_image_to_base64(image=image),
             "imageData_2" : encode_image_to_base64(image=image_2)
@@ -700,7 +764,7 @@ def test_aic_api():
 
 
 def main():
-    test_ffc_api()
+    test_bg_remove_api_render()
 
 # ---------------------------------------------------------------------------------------------------------------------- #   
 
