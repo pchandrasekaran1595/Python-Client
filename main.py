@@ -64,6 +64,9 @@ def show_images(
     plt.imshow(image_2, cmap=cmap_2)
     plt.axis("off")
     if title_2: plt.title(title_2)
+    if platform.system() == "Windows":
+        figmanager = plt.get_current_fig_manager()
+        figmanager.window.state("zoomed")
     plt.show()
 
 
@@ -90,13 +93,14 @@ def test_depth_api():
     args_3: str = "--filename"
     
     mode: str = "image"
-    base_url: str = "http://localhost:9090"
+    base_url: str = "http://192.168.10.3:9090"
     filename: str = "Test_1.jpg"
 
     if args_1 in sys.argv: mode: str = sys.argv[sys.argv.index(args_1) + 1]
     if args_2 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_2) + 1]
     if args_3 in sys.argv: filename: str = sys.argv[sys.argv.index(args_3) + 1]
 
+    assert mode == "image" or mode == "realtime", "Invalid Mode"
     
     url = f"{base_url}/infer"
 
@@ -760,8 +764,37 @@ def test_aic_api():
     else:
         print(f"Error {response.status_code} : {response.reason}")
 
-# ---------------------------------------------------------------------------------------------------------------------- #   
+# ---------------------------------------------------------------------------------------------------------------------- # 
 
+def test_kc_api():
+
+    args_1: str = "--base-url"
+    args_2: str = "--filename"
+    
+    base_url: str = "http://192.168.10.3:3040"
+    filename: str = "Test_1.jpg"
+
+    if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
+    if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
+
+    assert filename in os.listdir(INPUT_PATH), "File not Found"
+
+    image: np.ndarray = cv2.imread(os.path.join(INPUT_PATH, filename))
+
+    payload = {
+        "imageData" : encode_image_to_base64(image=image)
+    }
+
+    response = requests.request(method="POST", url=f"{base_url}/infer/", json=payload)
+    if response.status_code == 200:
+        if response.json()["statusCode"] == 200:
+           print(response.json()["label"])
+        else:
+            print(f"Error {response.json()['statusCode']} : {response.json()['statusText']}")
+    else:
+        print(f"Error {response.status_code} : {response.reason}")  
+
+# ---------------------------------------------------------------------------------------------------------------------- # 
 
 def main():
     test_bg_remove_api_render()
