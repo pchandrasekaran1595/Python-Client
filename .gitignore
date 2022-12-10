@@ -8,5 +8,6 @@ __pycache__
 *.bmp
 *.mp4
 *.avi
+temp_main.py
 !Test_1.jpg
 !Test_2.jpg

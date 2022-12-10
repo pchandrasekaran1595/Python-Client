@@ -571,7 +571,6 @@ def test_bg_remove_api():
         }
 
         response = requests.request(method="POST", url=url, json=payload)
-        response = requests.request(method="POST", url=url, json=payload)
 
 
         if response.status_code == 200:
