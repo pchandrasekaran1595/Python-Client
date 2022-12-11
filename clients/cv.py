@@ -32,14 +32,15 @@ def main():
            model == "remove" or \
            model == "replace" or \
            model == "depth" or \
-           model == "face", f"{model.title()} is an invalid model type"
+           model == "face-detect" or \
+           model == "face-recognize", f"{model.title()} is an invalid model type"
 
     if mode == "image":
         assert filename_1 in os.listdir(u.INPUT_PATH), f"{filename_1} not found in input directory"
 
         image = cv2.imread(os.path.join(u.INPUT_PATH, filename_1))
 
-        if model != "replace":
+        if model != "replace" and model != "face-recognize":
             payload = {
                 "imageData" : u.encode_image_to_base64(image=image)
             }
@@ -62,12 +63,14 @@ def main():
             if model == "detect":
                 cv2.rectangle(image, (response.json()["box"][0], response.json()["box"][1]), (response.json()["box"][2], response.json()["box"][3]), (0, 255, 0), 2)
                 cv2.putText(image, response.json()["label"], (response.json()["box"][0]-10, response.json()["box"][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                u.show_image(image)
+                u.show_image(image, title=f"{response.json()['label']} ({response.json()['score']})")
 
             if model == "segment":
-                print(f"Classes Present : {response.json()['labels']}")
+                title: str = ""
+                for label in response.json()["labels"]: title += f"{label},"
+                title = title[:-1]
                 image = u.decode_image(response.json()["imageData"])
-                u.show_image(image)
+                u.show_image(image, title=title)
             
             if model == "remove":
                 u.show_images(
@@ -99,9 +102,14 @@ def main():
                     title_2="Depth Image",
                 )
             
-            if model == "face":
-                    face_detections = response.json()["face_detections"]
-                    u.draw_detections(image=image, face_detections=face_detections)
+            if model == "face-detect":
+                face_detections = response.json()["face_detections"]
+                u.draw_detections(image=image, face_detections=face_detections)
+                u.show_image(image, title="Face Detections")
+                
+            if model == "face-recognize":
+                print(f"Simialrity : {float(response.json()['cosine_similarity']):.2f}")
+                
         else:
             print(f"Error {response.status_code} : {response.reason}")
 
