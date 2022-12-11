@@ -53,7 +53,7 @@ def show_images(
     cmap_2: str = "gnuplot2",
     title_1: str=None,
     title_2: str=None,
-    ) -> None:
+) -> None:
 
     plt.figure()
     plt.subplot(1, 2, 1)

@@ -5,6 +5,7 @@ import platform
 import requests
 import utils as u
 
+
 def main():
 
     args_1: str = "--mode"
@@ -82,7 +83,6 @@ def main():
             else:
                 cv2.putText(frame, "Error", (25, 75), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-        
             cv2.imshow("Recognition", frame)
             
             if cv2.waitKey(1) & 0xFF == ord("q"): 
