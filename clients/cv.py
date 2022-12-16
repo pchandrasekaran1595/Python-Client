@@ -42,7 +42,7 @@ def main():
 
         if model != "replace" and model != "face-recognize":
             payload = {
-                "imageData" : u.encode_image_to_base64(image=image)
+                "imageData_1" : u.encode_image_to_base64(image=image)
             }
 
         else:
