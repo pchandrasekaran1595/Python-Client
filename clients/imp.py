@@ -103,6 +103,57 @@ def main():
 
 # ---
 
+    elif process == "hsv":
+        hsv_type = sys.argv[sys.argv.index(args_3) + 2]
+        if hsv_type == "hue":
+            payload: dict = {
+                "hue" : float(sys.argv[sys.argv.index(args_3) + 3])
+            }
+
+        elif hsv_type == "saturation":
+            payload: dict = {
+                "saturation" : float(sys.argv[sys.argv.index(args_3) + 3]),
+            }
+        
+        elif hsv_type == "vibrance":
+            payload: dict = {
+                "vibrance" : float(sys.argv[sys.argv.index(args_3) + 3]),
+            }
+        
+        url: str = f"{base_url}/{process}/{hsv_type}"
+
+# ---
+
+    elif process == "sharpen":
+
+        payload: dict = {
+            "sharpen_kernel_size" : int(sys.argv[sys.argv.index(args_3) + 2]),
+        }
+
+        url: str = f"{base_url}/{process}"
+
+# ---
+  
+    elif process == "posterize":
+
+        payload: dict = {
+            "num_colors" : int(sys.argv[sys.argv.index(args_3) + 2]),
+        }
+
+        url: str = f"{base_url}/{process}"
+
+# ---
+  
+    elif process == "dither":
+
+        payload: dict = {
+            "num_colors" : int(sys.argv[sys.argv.index(args_3) + 2]),
+        }
+
+        url: str = f"{base_url}/{process}"
+
+# ---
+
     if mode == "image":
         assert filename in os.listdir(u.INPUT_PATH), f"{filename} not found in input directory"
 
@@ -112,7 +163,7 @@ def main():
 
         response = requests.request(method="POST", url=url, json=payload)
         if response.status_code == 200 and response.json()["statusCode"] == 200:
-            u.show_image(image=u.decode_image(response.json()["imageData"]), title=f"{process.title()} Processed")
+            u.show_image(image=u.decode_image(response.json()["imageData"]))
 
     else:
         pass

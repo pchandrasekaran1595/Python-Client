@@ -35,7 +35,7 @@ def main():
     image = cv2.imread(os.path.join(u.INPUT_PATH, filename_1))
 
     payload = {
-        "imageData" : u.encode_image_to_base64(image=image)
+        "imageData_1" : u.encode_image_to_base64(image=image)
     }
 
     if mode == "remove":
