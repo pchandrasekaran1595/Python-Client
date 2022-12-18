@@ -76,7 +76,32 @@ def main():
         
         url: str = f"{base_url}/{process}/{contrast_type}"
 
+# ---
 
+    elif process == "equalize":
+        equalize_type = sys.argv[sys.argv.index(args_3) + 2]
+        if equalize_type == "clahe":
+            setup = sys.argv[sys.argv.index(args_3) + 3] + ","
+
+            clipLimit = float(setup.split(",")[0])
+            tileGridSize = setup.split(",")[1]
+
+            if tileGridSize != "": tileGridSize = int(tileGridSize)
+            else: tileGridSize = None
+        
+            payload: dict = {
+                "clipLimit" : clipLimit,
+                "tileGridSize" : tileGridSize,
+            }
+        
+        elif equalize_type == "histogram":
+            payload: dict = {
+                
+            }
+        
+        url: str = f"{base_url}/{process}/{equalize_type}"
+
+# ---
 
     if mode == "image":
         assert filename in os.listdir(u.INPUT_PATH), f"{filename} not found in input directory"
