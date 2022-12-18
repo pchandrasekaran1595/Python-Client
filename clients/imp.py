@@ -26,7 +26,7 @@ def main():
 
     assert mode == "image" or mode == "realtime", "Invalid Mode"
 
-# ---
+# ---------- #
 
     if process == "blur":
         blur_type = sys.argv[sys.argv.index(args_3) + 2]
@@ -60,7 +60,7 @@ def main():
     
         url: str = f"{base_url}/{process}/{blur_type}"
 
-# ---
+# ---------- #
 
     elif process == "contrast":
         contrast_type = sys.argv[sys.argv.index(args_3) + 2]
@@ -76,7 +76,7 @@ def main():
         
         url: str = f"{base_url}/{process}/{contrast_type}"
 
-# ---
+# ---------- #
 
     elif process == "equalize":
         equalize_type = sys.argv[sys.argv.index(args_3) + 2]
@@ -101,7 +101,7 @@ def main():
         
         url: str = f"{base_url}/{process}/{equalize_type}"
 
-# ---
+# ---------- #
 
     elif process == "hsv":
         hsv_type = sys.argv[sys.argv.index(args_3) + 2]
@@ -121,8 +121,18 @@ def main():
             }
         
         url: str = f"{base_url}/{process}/{hsv_type}"
+    
+# ---------- #
 
-# ---
+    elif process == "channel_strength":
+        channel_type = sys.argv[sys.argv.index(args_3) + 2]
+        payload: dict = {
+            "factor" : float(sys.argv[sys.argv.index(args_3) + 3])
+        }
+        
+        url: str = f"{base_url}/{process}/{channel_type}"
+
+# ---------- #
 
     elif process == "sharpen":
 
@@ -132,7 +142,7 @@ def main():
 
         url: str = f"{base_url}/{process}"
 
-# ---
+# ---------- #
   
     elif process == "posterize":
 
@@ -142,7 +152,7 @@ def main():
 
         url: str = f"{base_url}/{process}"
 
-# ---
+# ---------- #
   
     elif process == "dither":
 
@@ -152,7 +162,7 @@ def main():
 
         url: str = f"{base_url}/{process}"
 
-# ---
+# ---------- #
 
     if mode == "image":
         assert filename in os.listdir(u.INPUT_PATH), f"{filename} not found in input directory"
