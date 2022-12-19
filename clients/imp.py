@@ -134,6 +134,15 @@ def main():
 
 # ---------- #
 
+    elif process == "binarize":
+        payload: dict = {
+            "binarization_threshold" : int(sys.argv[sys.argv.index(args_3) + 2]),
+        }
+        
+        url: str = f"{base_url}/{process}"
+
+# ---------- #
+
     elif process == "sharpen":
 
         payload: dict = {
