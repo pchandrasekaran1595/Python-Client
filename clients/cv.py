@@ -75,7 +75,7 @@ def main():
             if model == "remove":
                 u.show_images(
                     image_1=cv2.cvtColor(src=image, code=cv2.COLOR_BGR2RGB),
-                    image_2=cv2.cvtColor(src=u.decode_image(response.json()["bglessImageData"]), code=cv2.COLOR_BGR2RGB),
+                    image_2=u.decode_image(response.json()["bglessImageData"]),
                     cmap_1="gnuplot2",
                     cmap_2="gnuplot2",
                     title_1="Original",
@@ -85,7 +85,7 @@ def main():
             if model == "replace":
                 u.show_images(
                     image_1=cv2.cvtColor(src=image, code=cv2.COLOR_BGR2RGB),
-                    image_2=cv2.cvtColor(src=u.decode_image(response.json()["bgreplaceImageData"]), code=cv2.COLOR_BGR2RGB),
+                    image_2=u.decode_image(response.json()["bgreplaceImageData"]),
                     cmap_1="gnuplot2",
                     cmap_2="gnuplot2",
                     title_1="Original",
