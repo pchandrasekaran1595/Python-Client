@@ -14,7 +14,7 @@ def main():
     args_4: str = "--filename-2"
 
     mode: str = "image"
-    base_url: str = "http://localhost:3056"
+    base_url: str = "http://localhost:3058"
     filename_1: str = "Test_1.jpg"
     filename_2: str = "Test_2.jpg"
 
