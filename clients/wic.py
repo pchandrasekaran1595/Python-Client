@@ -26,7 +26,7 @@ def main():
 
     response = requests.request(method="POST", url=f"{base_url}/infer", json=payload)
     if response.status_code == 200 and response.json()["statusCode"] == 200:
-        print(response.json()["label"])
+        print(f"{response.json()['label']} ({response.json()['probability']})")
     else:
         print(f"Error {response.status_code} : {response.reason}")
     
