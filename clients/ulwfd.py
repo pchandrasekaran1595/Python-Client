@@ -22,6 +22,7 @@ def main():
     assert filename in os.listdir(u.INPUT_PATH), f"{filename} not found in input directory"
 
     image = cv2.imread(os.path.join(u.INPUT_PATH, filename))
+    h, w, _ = image.shape
 
     payload = {
         "imageData" : u.encode_image_to_base64(image=image)
@@ -29,11 +30,10 @@ def main():
 
     response = requests.request(method="POST", url=f"{base_url}/infer/{size}", json=payload)
     if response.status_code == 200 and response.json()["statusCode"] == 200:
-        x1 = response.json()["x1"]
-        y1 = response.json()["y1"]
-        x2 = response.json()["x2"]
-        y2 = response.json()["y2"]
-        # print(x1, y1, x2, y2)
+        x1 = int(response.json()["x1"] * w)
+        y1 = int(response.json()["y1"] * h)
+        x2 = int(response.json()["x2"] * w)
+        y2 = int(response.json()["y2"] * h)
         cv2.rectangle(image, pt1=(x1, y1), pt2=(x2, y2), color=(0, 255, 0), thickness=1)
         u.show_image(image)
     else:
