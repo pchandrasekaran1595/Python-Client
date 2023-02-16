@@ -9,33 +9,24 @@ def main():
 
     args_1: str = "--base-url"
     args_2: str = "--filename"
-    args_3: str = "--size"
     
-    base_url: str = "http://localhost:7070"
+    base_url: str = "http://localhost:3072"
     filename: str = "Test_1.jpg"
-    size: int = 320
 
     if args_1 in sys.argv: base_url: str = sys.argv[sys.argv.index(args_1) + 1]
     if args_2 in sys.argv: filename: str = sys.argv[sys.argv.index(args_2) + 1]
-    if args_3 in sys.argv: size: int = int(sys.argv[sys.argv.index(args_3) + 1])
 
     assert filename in os.listdir(u.INPUT_PATH), f"{filename} not found in input directory"
 
     image = cv2.imread(os.path.join(u.INPUT_PATH, filename))
-    h, w, _ = image.shape
 
     payload = {
         "imageData" : u.encode_image_to_base64(image=image)
     }
 
-    response = requests.request(method="POST", url=f"{base_url}/infer/{size}", json=payload)
+    response = requests.request(method="POST", url=f"{base_url}/infer", json=payload)
     if response.status_code == 200 and response.json()["statusCode"] == 200:
-        x1 = int(response.json()["x1"] * w)
-        y1 = int(response.json()["y1"] * h)
-        x2 = int(response.json()["x2"] * w)
-        y2 = int(response.json()["y2"] * h)
-        cv2.rectangle(image, pt1=(x1, y1), pt2=(x2, y2), color=(0, 255, 0), thickness=1)
-        u.show_image(image)
+        print(f"{response.json()['label']} ({response.json()['probability']})")
     else:
         print(f"Error {response.status_code} : {response.reason}")
     
