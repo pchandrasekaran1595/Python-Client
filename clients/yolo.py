@@ -15,7 +15,7 @@ def main():
     args_5: str = "--filename"
     
     mode: str = "image"
-    base_url: str = "http://192.168.10.3:5050"
+    base_url: str = "http://localhost:5050"
     model_type: str = "tiny"
     version: int = 6
     filename: str = "Test_1.jpg"
@@ -76,3 +76,7 @@ def main():
             
         cap.release()
         cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    sys.exit(main() or 0)
